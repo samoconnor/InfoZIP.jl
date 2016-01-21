@@ -9,6 +9,8 @@ This module provides support for reading and writing ZIP archives in Julia.
 Install via the Julia package manager, `Pkg.add("InfoZIP")`.
 
 Depends on the [Info ZIP](http://www.info-zip.org) `zip` and `uzip` tools.
+If these are not installed the [ZipFile.jl](https://github.com/fhs/ZipFile.jl)
+library is used instead.
 
 
 ## High level interface
