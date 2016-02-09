@@ -116,6 +116,15 @@ function Base.setindex!(z::Archive, data, filename::AbstractString)
 end
 
 
+# Add contents of "dict" to archive.
+
+function Base.merge!{T<:Associative}(z::Archive, dict::T)
+    for (filename, data) in dict
+        z[filename] = data
+    end
+end
+
+
 
 # Read files from ZIP using iterator syntax.
 
