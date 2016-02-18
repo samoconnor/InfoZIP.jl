@@ -1,6 +1,7 @@
-module InfoZIP
-
 __precompile__()
+
+
+module InfoZIP
 
 export open_zip, create_zip
 
