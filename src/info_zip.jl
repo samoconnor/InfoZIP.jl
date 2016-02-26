@@ -59,9 +59,7 @@ function Base.close(z::Archive)
 
     # Add files from tempdir to the archive...
     if !isempty(readdir(z.tempdir))
-        cd(z.tempdir) do
-            run(`zip -q -r $(z.filename) .`)
-        end
+        run(Cmd(`zip -q -r $(z.filename) .`, dir=z.tempdir))
         z.modified = true
     end
 
@@ -102,10 +100,8 @@ end
 function Base.setindex!(z::Archive, data, filename::AbstractString)
 
     # Write file to tempdir...
-    cd(z.tempdir) do
-        mkpath(dirname(filename))
-        open(io->write(io, data), filename, "w")
-    end
+    mkpath(joinpath(z.tempdir, dirname(filename)))
+    open(io->write(io, data), joinpath(z.tempdir, filename), "w")
 
     # Add filename to "keys"...
     if !(filename in z.keys)
@@ -150,9 +146,7 @@ typealias FileOrBytes Union{AbstractString,Vector{UInt8}}
 
 function unzip(archive::FileOrBytes, outputpath::AbstractString=pwd())
     open_zip(archive) do z
-        cd(outputpath) do
-            run(`unzip -q $(z.filename)`)
-        end
+        run(Cmd(`unzip -q $(z.filename)`, dir = outputpath))
     end
 end
 
