@@ -160,7 +160,7 @@ end
 # Read entire file...
 
 function readfile(io::ZipFile.ReadableFile)
-     b = readbytes(io)
+     b = read(io)
      return isvalid(ASCIIString, b) ? ASCIIString(b) :
             isvalid(UTF8String, b)  ? UTF8String(b)  : b
 end
@@ -180,9 +180,7 @@ end
 # Write "data" to "filename" (creating path as needed).
 function mkpath_write(filename::AbstractString, data)
     mkpath(dirname(filename))
-    Base.open(filename, "w") do io
-        write(io, data)
-    end
+    write(filename, data)
 end
 
 
@@ -213,7 +211,7 @@ create_zip(io::IO, files::Array, data::Array) = create_zip(io, zip(files, data).
 # Write to ZIP format from filenames.
 
 function create_zip(io::IO, files::Array)
-    create_zip(io::IO, files, [Base.open(readbytes, f) for f in files])
+    create_zip(io::IO, files, map(read, files))
 end
 
 

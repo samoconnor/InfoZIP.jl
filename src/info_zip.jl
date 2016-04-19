@@ -86,9 +86,9 @@ function Base.get(z::Archive, filename::AbstractString, default=nothing)
 
     f = joinpath(z.tempdir, filename)
     if isfile(f)
-        b = open(readbytes, f)
+        b = read(f)
     else 
-        b = readbytes(`unzip -qc $(z.filename) $filename`)
+        b = read(`unzip -qc $(z.filename) $filename`)
     end
     return isvalid(ASCIIString, b) ? ASCIIString(b) :
            isvalid(UTF8String, b)  ? UTF8String(b)  : b
@@ -101,7 +101,7 @@ function Base.setindex!(z::Archive, data, filename::AbstractString)
 
     # Write file to tempdir...
     mkpath(joinpath(z.tempdir, dirname(filename)))
-    open(io->write(io, data), joinpath(z.tempdir, filename), "w")
+    write(joinpath(z.tempdir, filename), data)
 
     # Add filename to "keys"...
     if !(filename in z.keys)
