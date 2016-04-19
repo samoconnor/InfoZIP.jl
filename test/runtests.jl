@@ -2,11 +2,15 @@ using InfoZIP
 using Base.Test
 
 
+using Compat.write
+using Compat.readstring
+
+
 # Command line "unzip" interface.
 
 function unzip_tool_is_missing()
     try
-        readall(`unzip`)
+        readstring(`unzip`)
         return false
     catch
         println("WARNING: unzip tool not found!")
@@ -21,7 +25,7 @@ function test_unzip_file(z)
     for f in readlines(`unzip -Z1 $z`)
         f = chomp(f)
         if basename(f) != ""
-            r[f] = readall(`unzip -qc $z $f`)
+            r[f] = readstring(`unzip -qc $z $f`)
         end
     end
     return r
@@ -329,22 +333,22 @@ delete!(d, "test.png")
 
 mktempdir() do d
     InfoZIP.unzip(testzip, d)
-    @test readall(joinpath(d, "hello.txt")) == "Hello!\n"
-    @test readall(joinpath(d, "foo/text.txt")) == "text\n"
+    @test readstring(joinpath(d, "hello.txt")) == "Hello!\n"
+    @test readstring(joinpath(d, "foo/text.txt")) == "text\n"
 end
 
 mktempdir() do d
     InfoZIP.unzip(create_zip(dict), d)
-    @test readall(joinpath(d, "hello.txt")) == "Hello!\n"
-    @test readall(joinpath(d, "foo/text.txt")) == "text\n"
+    @test readstring(joinpath(d, "hello.txt")) == "Hello!\n"
+    @test readstring(joinpath(d, "foo/text.txt")) == "text\n"
 end
 
 
 mktempdir() do d
     cd(d) do
-        open(io->write(io, "Hello!\n"), "hello.txt", "w")
+        write("hello.txt", "Hello!\n")
         mkdir("foo")
-        open(io->write(io, "text\n"), "foo/text.txt", "w")
+        write("foo/text.txt", "text\n")
         @test dict == Dict(open_zip(create_zip(["hello.txt", "foo/text.txt"])))
     end
 end
