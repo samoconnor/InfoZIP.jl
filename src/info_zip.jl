@@ -146,7 +146,7 @@ typealias FileOrBytes Union{AbstractString,Vector{UInt8}}
 
 function unzip(archive::FileOrBytes, outputpath::AbstractString=pwd())
     open_zip(archive) do z
-        run(Cmd(`unzip -q $(z.filename)`, dir = outputpath))
+        run(Cmd(`unzip -qo $(z.filename)`, dir = outputpath))
     end
 end
 
