@@ -80,6 +80,8 @@ end
 
 function Base.get(z::Archive, filename::AbstractString, default=nothing)
 
+    @assert !ismatch(r"^/", filename)
+
     if !haskey(z, filename)
         return default
     end
@@ -98,6 +100,8 @@ end
 # Add file to archive using Associative syntax: z[filename] = data.
 
 function Base.setindex!(z::Archive, data, filename::AbstractString)
+
+    @assert !ismatch(r"^/", filename)
 
     # Write file to tempdir...
     mkpath(joinpath(z.tempdir, dirname(filename)))
