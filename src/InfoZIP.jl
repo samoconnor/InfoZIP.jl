@@ -3,7 +3,7 @@ __precompile__()
 
 module InfoZIP
 
-export open_zip, create_zip
+export open_zip, create_zip, unzip
 
 using Compat.readstring
 using Compat.read
