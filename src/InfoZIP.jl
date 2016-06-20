@@ -13,18 +13,20 @@ Base.read(cmd::Cmd) = readbytes(cmd)
 end
 
 
-have_infozip = false
-try
-    if ismatch(r"^UnZip.*by Info-ZIP.", readstring(`unzip`))
-        have_infozip = true
+have_infozip() = haskey(ENV, "HAVE_INFOZIP") || try
+    ismatch(r"^UnZip.*by Info-ZIP.", readstring(`unzip`))
+catch ex
+    if isa(ex, Base.UVError) && ex.code == Base.UV_ENOENT
+        return false
     end
-catch
+    rethrow(ex)
 end
 
 
-if have_infozip
+if have_infozip()
     include("info_zip.jl")
 else
+    warn("InfoZIP falling back to ZipFile.jl backend!")
     include("zip_file.jl")
 end
 
