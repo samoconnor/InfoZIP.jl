@@ -19,7 +19,7 @@ function Archive(io::IO)
     cache = Dict()
     try
         reader = ZipFile.Reader(io, false)  
-        cache = Dict(f.name => "" for f in reader.files)
+        cache = Dict([Pair(f.name, "") for f in reader.files])
     end
     Archive(io, reader, nothing, cache, false)
 end
@@ -138,7 +138,7 @@ end
 # called to read the data from the archive.
 
 Base.eltype(::Type{Archive}) = 
-    Tuple{AbstractString,Union{ByteString,Vector{UInt8},AbstractString}}
+    Tuple{AbstractString,Union{UTF8String,Vector{UInt8},AbstractString}}
 
 Base.keys(z::Archive) = keys(z.cache)
 Base.length(z::Archive) = length(z.cache)
@@ -161,8 +161,7 @@ end
 
 function readfile(io::ZipFile.ReadableFile)
      b = read(io)
-     return isvalid(ASCIIString, b) ? ASCIIString(b) :
-            isvalid(UTF8String, b)  ? UTF8String(b)  : b
+     return isvalid(UTF8String, b)  ? UTF8String(b)  : b
 end
 
 
