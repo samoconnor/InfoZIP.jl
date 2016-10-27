@@ -19,7 +19,7 @@ function Archive(io::IO)
     cache = Dict()
     try
         reader = ZipFile.Reader(io, false)  
-        cache = Dict([f.name => "" for f in reader.files])
+        cache = Dict(f.name => "" for f in reader.files)
     end
     Archive(io, reader, nothing, cache, false)
 end
