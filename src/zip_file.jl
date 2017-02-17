@@ -169,9 +169,11 @@ end
 # Based on fhs/ZipFile.jl#16, thanks @timholy.
 
 function unzip(archive, outputpath::AbstractString=pwd())
-    for (filename, data) in open_zip(archive)
-        filename = joinpath(outputpath, filename)
-        mkpath_write(filename, data)
+    open_zip(archive) do file
+        for (filename, data) in file
+            filename = joinpath(outputpath, filename)
+            mkpath_write(filename, data)
+        end
     end
 end
 
