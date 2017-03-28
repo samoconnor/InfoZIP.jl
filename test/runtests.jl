@@ -2,10 +2,6 @@ using InfoZIP
 using Base.Test
 
 
-using Compat.write
-using Compat.readstring
-
-
 # Command line "unzip" interface.
 
 function unzip_tool_is_missing()
