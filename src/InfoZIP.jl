@@ -5,14 +5,6 @@ module InfoZIP
 
 export open_zip, create_zip
 
-using Compat.readstring
-using Compat.read
-using Compat.write
-using Compat.UTF8String
-if VERSION < v"0.5.0-dev+2228"
-Base.read(cmd::Cmd) = readbytes(cmd)
-end
-
 
 have_infozip() = haskey(ENV, "HAVE_INFOZIP") || try
     ismatch(r"^UnZip.*by Info-ZIP.", readstring(`unzip`))

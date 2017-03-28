@@ -138,7 +138,7 @@ end
 # called to read the data from the archive.
 
 Base.eltype(::Type{Archive}) = 
-    Tuple{AbstractString,Union{UTF8String,Vector{UInt8},AbstractString}}
+    Tuple{AbstractString,Union{String,Vector{UInt8},AbstractString}}
 
 Base.keys(z::Archive) = keys(z.cache)
 Base.length(z::Archive) = length(z.cache)
@@ -161,7 +161,7 @@ end
 
 function readfile(io::ZipFile.ReadableFile)
      b = read(io)
-     return isvalid(UTF8String, b)  ? UTF8String(b)  : b
+     return isvalid(String, b)  ? String(b)  : b
 end
 
 

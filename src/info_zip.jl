@@ -92,7 +92,7 @@ function Base.get(z::Archive, filename::AbstractString, default=nothing)
     else 
         b = read(`unzip -qc $(z.filename) $filename`)
     end
-    return isvalid(UTF8String, b)  ? UTF8String(b)  : b
+    return isvalid(String, b)  ? String(b)  : b
 end
 
 
@@ -128,7 +128,7 @@ end
 # Read files from ZIP using iterator syntax.
 
 Base.eltype(::Type{Archive}) = 
-    Tuple{AbstractString,Union{UTF8String,Vector{UInt8},AbstractString}}
+    Tuple{AbstractString,Union{String,Vector{UInt8},AbstractString}}
 
 Base.keys(z::Archive) =   z.keys
 Base.length(z::Archive) = length(z.keys)
