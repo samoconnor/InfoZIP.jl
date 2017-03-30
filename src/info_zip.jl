@@ -1,4 +1,4 @@
-type Archive <: Associative
+type Archive <: Associative{AbstractString,Any}
     filename::AbstractString
     bytes
     keys::Array{AbstractString,1}
@@ -142,7 +142,7 @@ end
 
 
 
-typealias FileOrBytes Union{AbstractString,Vector{UInt8}}
+const FileOrBytes = Union{AbstractString,Vector{UInt8}}
 
 # Extract ZIP archive to "outputpath".
 # Based on fhs/ZipFile.jl#16, thanks @timholy.

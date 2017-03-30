@@ -1,6 +1,6 @@
 using ZipFile
 
-type Archive <: Associative
+type Archive <: Associative{AbstractString,Any}
     io::IO
     reader
     writer
