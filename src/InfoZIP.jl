@@ -7,7 +7,8 @@ export open_zip, create_zip
 
 
 have_infozip() = haskey(ENV, "HAVE_INFOZIP") || try
-    ismatch(r"^UnZip.*by Info-ZIP.", readstring(`unzip`))
+    ismatch(r"^Copyright.* Info-ZIP", readstring(`zip -h`)) &&
+    ismatch(r"^UnZip.*by Info-ZIP", readstring(`unzip -h`))
 catch ex
     if isa(ex, Base.UVError) && ex.code == Base.UV_ENOENT
         return false
