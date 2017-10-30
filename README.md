@@ -13,6 +13,17 @@ If these are not installed the [ZipFile.jl](https://github.com/fhs/ZipFile.jl)
 library is used instead.
 
 
+## unzip
+
+`InfoZIP.unzip(archive, [outputdir])` extracts an archive to files in "outputdir" (or in the current directory by default).
+
+```julia
+InfoZIP.unzip("foo.zip", "/tmp/")
+
+InfoZIP.unzip(http_get("http://foo.com/foo.zip", "/tmp/"))
+```
+
+
 ## High level interface
 
 Use `open_zip` open a ZIP Archive for read and/or write.
@@ -111,15 +122,5 @@ or
 zip_data = create_zip(["hello.txt", "bar.csv"])
 ```
 
-
-## unzip
-
-`unzip(archive, [outputdir])` extracts an archive to files in "outputdir" (or in the current directory by default).
-
-```julia
-unzip("foo.zip", "/tmp/")
-
-unzip(http_get("http://foo.com/foo.zip", "/tmp/"))
-```
 
 *Based on [fhs/ZipFile.jl#16](https://github.com/fhs/ZipFile.jl/pull/16), thanks @timholy*
