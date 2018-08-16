@@ -1,0 +1,5 @@
+name = "InfoZip"
+uuid = "4fda2d3c-a181-11e8-2fca-c3b1916ac14e"
+version = "0.0.10"
+
+[deps]
