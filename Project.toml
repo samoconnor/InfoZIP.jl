@@ -1,5 +1,9 @@
 name = "InfoZip"
-uuid = "4fda2d3c-a181-11e8-2fca-c3b1916ac14e"
-version = "0.0.10"
+uuid = "f4508453-b816-52ab-a864-26fc7f6211fc"
+version = "0.2.0"
+
+[compat]
+Julia = "1"
 
 [deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

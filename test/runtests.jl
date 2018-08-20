@@ -1,13 +1,12 @@
 using InfoZIP
-using Base.Test
-
+using Test
 
 
 # Command line "unzip" interface.
 
 function unzip_tool_is_missing()
     try
-        readstring(`unzip`)
+        read(`unzip`, String)
         return false
     catch
         println("WARNING: unzip tool not found!")
@@ -22,7 +21,7 @@ function test_unzip_file(z)
     for f in readlines(`unzip -Z1 $z`)
         f = chomp(f)
         if basename(f) != ""
-            r[f] = readstring(`unzip -qc $z $f`)
+            r[f] = read(`unzip -qc $z $f`, String)
         end
     end
     return r
@@ -319,7 +318,7 @@ buf = UInt8[]
 
 # Unzip file created by command-line "zip" tool...
 
-testzip = joinpath(Pkg.dir("InfoZIP"),"test","test.zip")
+testzip = joinpath(dirname(pathof(InfoZIP)),"..","test","test.zip")
 d = Dict(open_zip(testzip))
 @test sum(d["test.png"]) == 462242
 delete!(d, "test.png")
@@ -330,14 +329,14 @@ delete!(d, "test.png")
 
 mktempdir() do d
     InfoZIP.unzip(testzip, d)
-    @test readstring(joinpath(d, "hello.txt")) == "Hello!\n"
-    @test readstring(joinpath(d, "foo/text.txt")) == "text\n"
+    @test read(joinpath(d, "hello.txt"), String) == "Hello!\n"
+    @test read(joinpath(d, "foo/text.txt"), String) == "text\n"
 end
 
 mktempdir() do d
     InfoZIP.unzip(create_zip(dict), d)
-    @test readstring(joinpath(d, "hello.txt")) == "Hello!\n"
-    @test readstring(joinpath(d, "foo/text.txt")) == "text\n"
+    @test read(joinpath(d, "hello.txt"), String) == "Hello!\n"
+    @test read(joinpath(d, "foo/text.txt"), String) == "text\n"
 end
 
 

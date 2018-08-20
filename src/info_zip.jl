@@ -1,4 +1,4 @@
-type Archive <: Associative{AbstractString,Any}
+mutable struct Archive <: AbstractDict{AbstractString,Any}
     filename::AbstractString
     bytes
     keys::Array{AbstractString,1}
@@ -76,11 +76,11 @@ end
 
 
 
-# Extract file from archive using Associative syntax: data = z[filename].
+# Extract file from archive using AbstractDict syntax: data = z[filename].
 
 function Base.get(z::Archive, filename::AbstractString, default=nothing)
 
-    @assert !ismatch(r"^/", filename)
+    @assert !occursin(r"^/", filename)
 
     if !haskey(z, filename)
         return default
@@ -96,11 +96,11 @@ function Base.get(z::Archive, filename::AbstractString, default=nothing)
 end
 
 
-# Add file to archive using Associative syntax: z[filename] = data.
+# Add file to archive using AbstractDict syntax: z[filename] = data.
 
 function Base.setindex!(z::Archive, data, filename::AbstractString)
 
-    @assert !ismatch(r"^/", filename)
+    @assert !occursin(r"^/", filename)
 
     # Write file to tempdir...
     mkpath(joinpath(z.tempdir, dirname(filename)))
@@ -117,7 +117,7 @@ end
 
 # Add contents of "dict" to archive.
 
-function Base.merge!{T<:Associative}(z::Archive, dict::T)
+function Base.merge!(z::Archive, dict::T) where T <: AbstractDict
     for (filename, data) in dict
         z[filename] = data
     end
@@ -132,11 +132,14 @@ Base.eltype(::Type{Archive}) =
 
 Base.keys(z::Archive) =   z.keys
 Base.length(z::Archive) = length(z.keys)
-Base.start(z::Archive) = start(z.keys)
-Base.done(z::Archive, state) = done(z.keys, state)
 
-function Base.next(z::Archive, state)
-    (filename, state) = next(z.keys, state)
+function Base.iterate(z::Archive, state = nothing)
+    i = state == nothing ? iterate(z.keys) :
+                           iterate(z.keys, state)
+    if i == nothing
+        return nothing
+    end
+    (filename, state) = i
     return ((filename, get(z, filename)), state)
 end
 
@@ -171,7 +174,7 @@ end
 
 # Create archive from "dict".
 
-function create_zip{T<:Associative}(archive::FileOrBytes, dict::T)
+function create_zip(archive::FileOrBytes, dict::T) where T <: AbstractDict
 
     rm_archive(archive)
     open_zip(archive) do z
@@ -184,7 +187,8 @@ end
 
 # Create archive from (filename, data) tuples.
 
-create_zip{T<:Tuple}(a::FileOrBytes, files::Array{T}) = create_zip(a, files...)
+create_zip(a::FileOrBytes, files::Array{T}) where T <: Tuple =
+    create_zip(a, files...)
 
 
 # Create archive from "files" and "data".

@@ -1,6 +1,6 @@
 using ZipFile
 
-type Archive <: Associative{AbstractString,Any}
+mutable struct Archive <: AbstractDict{AbstractString,Any}
     io::IO
     reader
     writer
@@ -20,6 +20,7 @@ function Archive(io::IO)
     try
         reader = ZipFile.Reader(io, false)  
         cache = Dict([Pair(f.name, "") for f in reader.files])
+    catch ex
     end
     Archive(io, reader, nothing, cache, false)
 end
@@ -28,7 +29,7 @@ end
 # Open a ZIP Archive from io, buffer or file.
 
 open_zip(io::IO) = Archive(io)
-open_zip(data::Array{UInt8,1}) = Archive(IOBuffer(data, true, true))
+open_zip(data::Array{UInt8,1}) = Archive(IOBuffer(data, read=true, write=true))
 open_zip(filename::AbstractString) = Archive(Base.open(filename, "a+"))
 open_zip(f::Function, args...) = with_close(f, open_zip(args...))
 
@@ -52,7 +53,7 @@ function Base.close(z::Archive)
 end
 
 
-# Read file from ZIP using Associative syntax: data = z[filename].
+# Read file from ZIP using AbstractDict syntax: data = z[filename].
 
 function Base.get(z::Archive, filename::AbstractString, default=nothing)
 
@@ -91,7 +92,7 @@ function rewind(f::ZipFile.ReadableFile)
 end
 
 
-# Add files to ZIP using Associative syntax: z[filename] = data.
+# Add files to ZIP using AbstractDict syntax: z[filename] = data.
 
 function Base.setindex!(z::Archive, data, filename::AbstractString)
 
@@ -142,13 +143,16 @@ Base.eltype(::Type{Archive}) =
 
 Base.keys(z::Archive) = keys(z.cache)
 Base.length(z::Archive) = length(z.cache)
-Base.start(z::Archive) = start(z.cache)
-Base.done(z::Archive, state) = done(z.cache, state)
 
-function Base.next(z::Archive, state)
-    ((filename, data), state) = next(z.cache, state)
+function Base.iterate(z::Archive, state = nothing)
+    i = state == nothing ? iterate(z.cache) :
+                           iterate(z.cache, state)
+    if i == nothing
+        return nothing
+    end
+    ((filename, data), state) = i
     if basename(filename) == ""
-        return next(z, state)
+        return iterate(z, state)
     end
     if data == ""
         data = get(z, filename)
@@ -188,7 +192,7 @@ end
 
 # Write content of "dict" to "io" in ZIP format.
 
-function create_zip{T<:Associative}(io::IO, dict::T)
+function create_zip(io::IO, dict::T) where T <: AbstractDict
 
     open_zip(io) do z
         for (filename, data) in dict
@@ -201,7 +205,7 @@ end
 
 # Write to ZIP format from (filename, data) tuples.
 
-create_zip{T<:Tuple}(io::IO, files::Array{T}) = create_zip(io, files...)
+create_zip(io::IO, files::Array{T}) where T <: Tuple = create_zip(io, files...)
 
 
 # Write "files" and "data" to ZIP format.
@@ -233,7 +237,7 @@ end
 function create_zip(arg, args...)
 
     buf = UInt8[]
-    with_close(IOBuffer(buf, true, true)) do io
+    with_close(IOBuffer(buf, read=true, write=true)) do io
         create_zip(io, arg, args...)
     end
     buf
