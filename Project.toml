@@ -1,6 +1,6 @@
-name = "InfoZip"
+name = "InfoZIP"
 uuid = "f4508453-b816-52ab-a864-26fc7f6211fc"
-version = "0.2.0"
+version = "0.1.6"
 
 [compat]
 Julia = "1"

@@ -1,4 +1,4 @@
-The InfoZip.jl package is licensed under the MIT "Expat" License:
+The InfoZIP.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2016: Sam O'Connor.
 >
