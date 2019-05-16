@@ -3,7 +3,7 @@ uuid = "f4508453-b816-52ab-a864-26fc7f6211fc"
 version = "0.1.6"
 
 [compat]
-Julia = "1"
+julia = "1"
 
 [deps]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
